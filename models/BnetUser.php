@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\models\queries\BnetUserQuery;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -105,8 +106,12 @@ class BnetUser extends ActiveRecord
     }
 
 
-    public function ban() {
+    /**
+     * @param string|null $reason
+     */
+    public function ban($reason = null) {
         $this->auth_lock = 'true';
+        if ($reason) $this->auth_lockreason = $reason;
         $this->save();
     }
 

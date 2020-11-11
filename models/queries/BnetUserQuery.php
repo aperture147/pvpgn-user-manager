@@ -1,13 +1,16 @@
 <?php
 
-namespace app\models;
+namespace app\models\queries;
+
+use app\models\BnetUser;
+use yii\db\ActiveQuery;
 
 /**
  * This is the ActiveQuery class for [[BnetUser]].
  *
  * @see BnetUser
  */
-class BnetUserQuery extends \yii\db\ActiveQuery
+class BnetUserQuery extends ActiveQuery
 {
     /*public function active()
     {
