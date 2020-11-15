@@ -60,7 +60,7 @@ YiiAsset::register($this);
 //            'new_at_team_flag',
             'auth_lock',
 //            'auth_locktime',
-//            'auth_lockreason',
+            'auth_lockreason',
 //            'auth_mute',
 //            'auth_mutetime:datetime',
 //            'auth_mutereason',

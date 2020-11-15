@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'username',
 //            'acct_userid',
             'acct_email:email',
-            'auth_admin',
+//            'auth_admin',
             //'auth_normallogin',
             //'auth_changepass',
             //'auth_changeprofile',
