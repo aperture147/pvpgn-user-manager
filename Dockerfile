@@ -1,8 +1,7 @@
 FROM yiisoftware/yii2-php:7.4-apache
 
+COPY composer.json composer.json
 RUN composer update --no-dev --apcu-autoloader -o
-
-WORKDIR /app
 
 COPY . .
 COPY docker/web/index.php web/index
