@@ -32,7 +32,7 @@ class EmailSender
         $email->setTemplateId(SENDGRID_TEMPLATE_ID);
         $email->addDynamicTemplateDatas([
             "username" => $bnetUser->username,
-            "confirm_url" => Url::home() . Url::to(['/api/user/verify', 'token' => $confirmToken])
+            "confirm_url" => getenv("HOST") . Url::to(['/api/user/verify', 'token' => $confirmToken])
         ]);
         $email->setAsm(SENDGRID_ASM);
         $sendgrid = new SendGrid(SENDGRID_APIKEY);
