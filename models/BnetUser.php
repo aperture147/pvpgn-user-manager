@@ -2,8 +2,8 @@
 
 namespace app\models;
 
+use app\helpers\PvpgnHash;
 use app\models\queries\BnetUserQuery;
-use Yii;
 use yii\db\ActiveRecord;
 
 /**
@@ -36,6 +36,11 @@ use yii\db\ActiveRecord;
  */
 class BnetUser extends ActiveRecord
 {
+    /**
+     * Text is used as the ban message
+     */
+    const EMAIL_NOT_VERIFIED = "Email not verified";
+
     /**
      * {@inheritdoc}
      */
@@ -108,15 +113,46 @@ class BnetUser extends ActiveRecord
 
     /**
      * @param string|null $reason
+     * @return bool
      */
-    public function ban($reason = null) {
+    public function ban($reason = null)
+    {
         $this->auth_lock = 'true';
         if ($reason) $this->auth_lockreason = $reason;
-        $this->save();
+        return $this->save();
     }
 
-    public function unban() {
+    /**
+     * @return bool
+     */
+    public function verifyBan()
+    {
+        return $this->ban(self::EMAIL_NOT_VERIFIED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVerified()
+    {
+        return strcmp(self::EMAIL_NOT_VERIFIED, $this->auth_lockreason) === 0;
+    }
+
+    /**
+     * @return bool
+     */
+    public function unban()
+    {
         $this->auth_lock = 'false';
-        $this->save();
+        return $this->save();
+    }
+
+    /**
+     * @param string $password
+     * @return bool
+     */
+    public function checkPassword(string $password)
+    {
+        return strcmp(PvpgnHash::get_hash($password), $this->acct_passhash1) === 0;
     }
 }

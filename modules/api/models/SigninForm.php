@@ -10,7 +10,7 @@ use yii\base\Exception;
 use yii\base\Model;
 use yii\web\BadRequestHttpException;
 
-class UserForm extends Model
+class SigninForm extends Model
 {
     public $email;
     public $username;
@@ -21,7 +21,7 @@ class UserForm extends Model
         return [
             [['email', 'password', 'username'], 'required'],
             ['email', 'email'],
-            ['username', 'trim', 'max' => 255],
+            ['username', 'trim'],
             ['password', 'string', 'max' => 255]
         ];
     }
@@ -46,7 +46,7 @@ class UserForm extends Model
             $user->username = $this->username;
             $user->acct_username = $this->username;
             $user->acct_passhash1 = PvpgnHash::get_hash($this->password);
-            $user->ban("Chua xac thuc email");
+            $user->verifyBan();
             EmailSender::sendVerification($user);
             return $user->save($runValidation, $attributeNames);
 

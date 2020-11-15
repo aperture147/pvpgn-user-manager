@@ -6,7 +6,8 @@ namespace app\modules\api\controllers;
 
 use app\components\EmailSender;
 use app\models\BnetUser;
-use app\modules\api\models\UserForm;
+use app\modules\api\models\LoginForm;
+use app\modules\api\models\SigninForm;
 use SendGrid\Mail\TypeException;
 use Yii;
 use yii\base\Exception;
@@ -35,12 +36,31 @@ class UserController extends Controller
     /**
      * @return string[]
      * @throws BadRequestHttpException
+     */
+    public function actionLogin()
+    {
+        $model = new LoginForm();
+
+        if ($model->load(Yii::$app->request->post(), '')) {
+            $user = BnetUser::findOne(["username" => $model]);
+            if ($user->checkPassword($model->password)) {
+                return [
+                    "message" => "Login succeeded"
+                ];
+            }
+        }
+        throw new BadRequestHttpException("Cannot login, wrong user credential");
+    }
+
+    /**
+     * @return string[]
+     * @throws BadRequestHttpException
      * @throws Exception
      * @throws TypeException
      */
     public function actionSignup()
     {
-        $model = new UserForm();
+        $model = new SigninForm();
 
         if ($model->load(Yii::$app->request->post(), '') && $model->save()) {
             return [
@@ -77,7 +97,7 @@ class UserController extends Controller
     {
         if ($email) {
             $user = BnetUser::findOne(['acct_email' => $email]);
-            if ($user) {
+            if ($user && $user->auth_lock && !$user->isVerified()) {
                 EmailSender::sendVerification($user);
                 return [
                     "message" => "Check your email for verification"
