@@ -50,6 +50,7 @@ class EmailSender
         $cache = Yii::$app->getCache();
         if ($cache->exists($confirmToken)) {
             $user = BnetUser::find()->where(["uid" => $cache->get($confirmToken)])->one();
+            Yii::$app->cache->delete($confirmToken);
             return $user && $user->unban();
         }
         throw new BadRequestHttpException("Invalid token");
