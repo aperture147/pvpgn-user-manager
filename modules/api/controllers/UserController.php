@@ -97,11 +97,14 @@ class UserController extends Controller
     {
         if ($email) {
             $user = BnetUser::findOne(['acct_email' => $email]);
-            if ($user && $user->auth_lock && !$user->isVerified()) {
-                EmailSender::sendVerification($user);
-                return [
-                    "message" => "Check your email for verification"
-                ];
+            if ($user && $user->auth_lock) {
+                if (!$user->isVerified()) {
+                    EmailSender::sendVerification($user);
+                    return [
+                        "message" => "Check your email for verification"
+                    ];
+                }
+                throw new BadRequestHttpException("User banned");
             }
         }
         throw new BadRequestHttpException("Invalid email");
