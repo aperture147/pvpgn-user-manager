@@ -10,6 +10,7 @@ use Yii;
 use yii\base\Exception;
 use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
+use yii\web\ServerErrorHttpException;
 
 class EmailSender
 {
@@ -17,8 +18,9 @@ class EmailSender
     /**
      * @param $bnetUser BnetUser
      * @return string
-     * @throws TypeException
      * @throws Exception
+     * @throws ServerErrorHttpException
+     * @throws TypeException
      */
     static public function sendVerification($bnetUser)
     {
@@ -34,7 +36,9 @@ class EmailSender
         ]);
         $email->setAsm(SENDGRID_ASM);
         $sendgrid = new SendGrid(SENDGRID_APIKEY);
-        $sendgrid->send($email);
+        $response = $sendgrid->send($email);
+        if ($response->statusCode() >= 400)
+            throw new ServerErrorHttpException("Cannot send verification email");
         // Cache for 15 mins, but we give it one more minutes
         Yii::$app->cache->add($confirmToken, $bnetUser->uid, 960);
         return $confirmToken;
