@@ -16,22 +16,6 @@ use yii\web\BadRequestHttpException;
 
 class UserController extends Controller
 {
-    /**
-     * @return string[]
-     * @throws BadRequestHttpException
-     */
-    public function actionSignup()
-    {
-        $model = new UserForm();
-
-        if ($model->load(Yii::$app->request->post(), '') && $model->save()) {
-            return [
-                "message" => "Check your email for verification"
-            ];
-        }
-
-        throw new BadRequestHttpException("Cannot create new User");
-    }
 
     public function behaviors()
     {
@@ -46,6 +30,25 @@ class UserController extends Controller
             ]
         ];
         return $behaviors;
+    }
+
+    /**
+     * @return string[]
+     * @throws BadRequestHttpException
+     * @throws Exception
+     * @throws TypeException
+     */
+    public function actionSignup()
+    {
+        $model = new UserForm();
+
+        if ($model->load(Yii::$app->request->post(), '') && $model->save()) {
+            return [
+                "message" => "Check your email for verification"
+            ];
+        }
+
+        throw new BadRequestHttpException("Cannot create new User");
     }
 
     /**
