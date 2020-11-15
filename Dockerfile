@@ -4,7 +4,7 @@ COPY composer.json composer.json
 RUN composer update --no-dev --apcu-autoloader -o
 
 COPY . .
-COPY docker/web/index.php web/index
+COPY docker/web/index.php web/index.php
 
 RUN chown -R www-data:www-data runtime \
     && chown -R www-data:www-data web/assets \
