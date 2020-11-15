@@ -36,6 +36,10 @@ class SigninForm extends Model
      */
     public function save($runValidation = true, $attributeNames = null)
     {
+        $emailDomain = explode('@', $this->email);
+        if (strcmp(trim(array_pop($emailDomain)), 'gmail.com') !== 0)
+            throw new BadRequestHttpException("Only gmail is accepted");
+
         if (!BnetUser::find()->where(["or", ["username" => $this->username], ["acct_email" => $this->email]])->limit(1)->exists()) {
             $lastUser = BnetUser::find()->orderBy(['uid' => SORT_DESC])->limit(1)->one();
             $uid = $lastUser->uid + 1;
