@@ -14,6 +14,7 @@ use yii\base\Exception;
 use yii\filters\VerbFilter;
 use yii\rest\Controller;
 use yii\web\BadRequestHttpException;
+use yii\web\ForbiddenHttpException;
 
 class UserController extends Controller
 {
@@ -36,6 +37,7 @@ class UserController extends Controller
     /**
      * @return string[]
      * @throws BadRequestHttpException
+     * @throws ForbiddenHttpException
      */
     public function actionLogin()
     {
@@ -44,6 +46,11 @@ class UserController extends Controller
         if ($model->load(Yii::$app->request->post(), '')) {
             $user = BnetUser::findOne(["username" => $model]);
             if ($user->checkPassword($model->password)) {
+                if ($user->isBanned()) {
+                    if ($user->isVerified())
+                        throw new ForbiddenHttpException("User banned");
+                    throw new ForbiddenHttpException("User not verified");
+                }
                 return [
                     "message" => "Login succeeded"
                 ];

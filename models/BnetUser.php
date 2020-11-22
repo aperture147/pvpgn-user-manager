@@ -111,6 +111,10 @@ class BnetUser extends ActiveRecord
     }
 
 
+    public function isBanned() {
+        return (strcmp($this->auth_lock, 'true') === 0);
+    }
+
     /**
      * @param string|null $reason
      * @return bool
@@ -144,6 +148,7 @@ class BnetUser extends ActiveRecord
     public function unban()
     {
         $this->auth_lock = 'false';
+        $this->auth_lockreason = '';
         return $this->save();
     }
 
