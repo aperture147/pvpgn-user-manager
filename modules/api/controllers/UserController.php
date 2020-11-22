@@ -94,7 +94,7 @@ class UserController extends Controller
     }
 
     /**
-     * @param null $email
+     * @param string|null $email
      * @return string[]
      * @throws BadRequestHttpException
      * @throws TypeException

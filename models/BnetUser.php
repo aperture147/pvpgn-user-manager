@@ -139,7 +139,7 @@ class BnetUser extends ActiveRecord
      */
     public function isVerified()
     {
-        return strcmp(self::EMAIL_NOT_VERIFIED, $this->auth_lockreason) === 0;
+        return strcmp(self::EMAIL_NOT_VERIFIED, $this->auth_lockreason) !== 0;
     }
 
     /**
