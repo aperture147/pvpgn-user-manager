@@ -104,7 +104,7 @@ class UserController extends Controller
     {
         if ($email) {
             $user = BnetUser::findOne(['acct_email' => $email]);
-            if ($user && $user->auth_lock) {
+            if ($user && strcmp($user->auth_lock, 'true') === 0) {
                 if (!$user->isVerified()) {
                     EmailSender::sendVerification($user);
                     return [
