@@ -54,6 +54,7 @@ $config = [
             'enableStrictParsing' => false,
             'rules' => [
                 '<controller>/<id:\d+>/<action>' => '<controller>/<action>',
+                'verified' => 'site/verified'
             ]
         ],
     ],

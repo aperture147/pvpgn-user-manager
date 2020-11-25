@@ -5,6 +5,7 @@ RUN composer update --no-dev --apcu-autoloader -o
 
 ENV HOST=placeholder \
     SENDGRID_TEMPLATE_ID=placeholder \
+    SENDGRID_VERIFIED_TEMPLATE_ID=placeholder \
     SENDGRID_APIKEY=placeholder \
     SENDGRID_ASM=0
 

@@ -45,17 +45,42 @@ class EmailSender
     }
 
     /**
+     * @param $bnetUser
+     * @throws ServerErrorHttpException
+     * @throws TypeException
+     */
+    static public function sendVerified($bnetUser)
+    {
+        $email = new Mail();
+        $email->setFrom("verify@mobavietnam.com", "Mobavietnam");
+        $email->addTo($bnetUser->acct_email, $bnetUser->username);
+        $email->setTemplateId(SENDGRID_VERIFIED_TEMPLATE_ID);
+        $email->addDynamicTemplateDatas([
+            "username" => $bnetUser->username,
+        ]);
+        $email->setAsm(SENDGRID_ASM);
+        $sendgrid = new SendGrid(SENDGRID_APIKEY);
+        $response = $sendgrid->send($email);
+        if ($response->statusCode() >= 400)
+            throw new ServerErrorHttpException("Cannot send verified email");
+    }
+
+    /**
      * @param $confirmToken string
      * @return bool
      * @throws BadRequestHttpException
+     * @throws ServerErrorHttpException
+     * @throws TypeException
      */
     static public function checkVerification($confirmToken)
     {
         $cache = Yii::$app->getCache();
         if ($cache->exists($confirmToken)) {
-            $user = BnetUser::find()->where(["uid" => $cache->get($confirmToken)])->one();
-            Yii::$app->cache->delete($confirmToken);
-            return $user && $user->unban();
+            if ($user = BnetUser::findOne(["uid" => $cache->get($confirmToken)])) {
+                Yii::$app->cache->delete($confirmToken);
+                self::sendVerified($user);
+                return $user->unban();
+            }
         }
         throw new BadRequestHttpException("Invalid token");
     }

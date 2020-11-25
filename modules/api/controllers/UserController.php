@@ -15,6 +15,8 @@ use yii\filters\VerbFilter;
 use yii\rest\Controller;
 use yii\web\BadRequestHttpException;
 use yii\web\ForbiddenHttpException;
+use yii\web\Response;
+use yii\web\ServerErrorHttpException;
 
 class UserController extends Controller
 {
@@ -80,14 +82,16 @@ class UserController extends Controller
 
     /**
      * @param null $token
-     * @return string[]
+     * @return Response
      * @throws BadRequestHttpException
+     * @throws TypeException
+     * @throws ServerErrorHttpException
      */
     public function actionVerify($token = null)
     {
         if ($token) {
             if (EmailSender::checkVerification($token)) {
-                return ["message" => "ok"];
+                return $this->redirect(['/verified']);
             }
         }
         throw new BadRequestHttpException("Invalid token");

@@ -125,4 +125,15 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
+    /**
+     * Displays about page.
+     *
+     * @return string
+     */
+    public function actionVerified()
+    {
+        $this->layout = 'empty';
+        return $this->render('verified');
+    }
 }
