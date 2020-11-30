@@ -4,8 +4,8 @@ $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
 $config = [
-    'id' => 'basic',
-    'name'=>'MobaZ User Manager',
+    'id' => 'mobaz',
+    'name'=>'MobaZ API',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'aliases' => [
