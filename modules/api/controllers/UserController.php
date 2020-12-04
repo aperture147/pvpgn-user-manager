@@ -47,7 +47,7 @@ class UserController extends Controller
 
         if ($model->load(Yii::$app->request->post(), '')) {
             $user = BnetUser::findOne(["username" => $model]);
-            if ($user->checkPassword($model->password)) {
+            if ($user && $user->checkPassword($model->password)) {
                 if ($user->isBanned()) {
                     if ($user->isVerified())
                         throw new ForbiddenHttpException("User banned");
