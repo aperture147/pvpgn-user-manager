@@ -24,7 +24,7 @@ class EmailSender
      */
     static public function sendVerification($bnetUser)
     {
-        $confirmToken = Yii::$app->security->generateRandomString();
+        $confirmToken = md5(Yii::$app->security->generateRandomString() . $bnetUser->acct_email . time());
 
         $email = new Mail();
         $email->setFrom("verify@mobavietnam.com", "Mobavietnam");
@@ -39,8 +39,8 @@ class EmailSender
         $response = $sendgrid->send($email);
         if ($response->statusCode() >= 400)
             throw new ServerErrorHttpException("Cannot send verification email");
-        // Cache for 15 mins, but we give it one more minutes
-        Yii::$app->cache->add($confirmToken, $bnetUser->uid, 960);
+        // Cache for 15 mins, but we give it five more minutes if email sending is delayed
+        Yii::$app->cache->add($confirmToken, $bnetUser->uid, 1200);
         return $confirmToken;
     }
 
