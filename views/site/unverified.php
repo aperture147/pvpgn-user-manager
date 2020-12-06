@@ -4,12 +4,12 @@
 
 use yii\helpers\Html;
 
-$this->title = 'Email đã được xác thực!';
+$this->title = 'Liên kết hết hạn';
 ?>
 <div class="site-email-verified">
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        Chúc mừng, email của bạn đã được xác thực.
+        Đường dẫn xác thực này đã hết hạn, vui lòng yêu cầu gửi lại email xác thực.
     </p>
 </div>

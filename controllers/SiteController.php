@@ -136,4 +136,15 @@ class SiteController extends Controller
         $this->layout = 'empty';
         return $this->render('verified');
     }
+
+    /**
+     * Displays about page.
+     *
+     * @return string
+     */
+    public function actionUnverified()
+    {
+        $this->layout = 'empty';
+        return $this->render('unverified');
+    }
 }
