@@ -3,7 +3,7 @@ FROM yiisoftware/yii2-php:7.4-apache
 COPY composer.json composer.json
 RUN composer update --no-dev --apcu-autoloader -o && \
     composer clearcache && \
-    sudo rm -rf ~/.composer
+    rm -rf ~/.composer
 
 ENV HOST=placeholder \
     SENDGRID_TEMPLATE_ID=placeholder \
