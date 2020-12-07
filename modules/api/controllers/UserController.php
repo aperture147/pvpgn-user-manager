@@ -46,7 +46,7 @@ class UserController extends Controller
         $model = new LoginForm();
 
         if ($model->load(Yii::$app->request->post(), '')) {
-            $user = BnetUser::findOne(["username" => $model]);
+            $user = BnetUser::findOne(["username" => $model->username]);
             if ($user && $user->checkPassword($model->password)) {
                 if ($user->isBanned()) {
                     if ($user->isVerified())
