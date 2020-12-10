@@ -10,18 +10,18 @@ use yii\base\Exception;
 use yii\base\Model;
 use yii\web\BadRequestHttpException;
 
-class SigninForm extends Model
+class SignupForm extends Model
 {
-    public $email;
-    public $username;
-    public $password;
+    public string $email;
+    public string $username;
+    public string $password;
 
     public function rules()
     {
         return [
             [['email', 'password', 'username'], 'required'],
             ['email', 'email'],
-            ['username', 'trim'],
+            ['username', 'match', 'pattern' => '/^[A-Za-z0-9_]\w*$/i'],
             ['password', 'string', 'max' => 255]
         ];
     }
@@ -51,8 +51,8 @@ class SigninForm extends Model
             $user->acct_username = $this->username;
             $user->acct_passhash1 = PvpgnHash::get_hash($this->password);
             $user->verifyBan();
-            EmailSender::sendVerification($user);
-            return $user->save($runValidation, $attributeNames);
+            if (!EmailSender::sendVerification($user))
+                return $user->save($runValidation, $attributeNames);
 
         } else throw new BadRequestHttpException("User existed");
     }

@@ -7,7 +7,7 @@ namespace app\modules\api\controllers;
 use app\components\EmailSender;
 use app\models\BnetUser;
 use app\modules\api\models\LoginForm;
-use app\modules\api\models\SigninForm;
+use app\modules\api\models\SignupForm;
 use SendGrid\Mail\TypeException;
 use Yii;
 use yii\base\Exception;
@@ -69,15 +69,14 @@ class UserController extends Controller
      */
     public function actionSignup()
     {
-        $model = new SigninForm();
+        $model = new SignupForm();
 
-        if ($model->load(Yii::$app->request->post(), '') && $model->save()) {
+        if ($model->load(Yii::$app->request->post(), '') && $model->validate() && $model->save())
             return [
                 "message" => "Check your email for verification"
             ];
-        }
 
-        throw new BadRequestHttpException("Cannot create new User");
+        throw new BadRequestHttpException('Cannot create new user, might contains special characters');
     }
 
     /**
