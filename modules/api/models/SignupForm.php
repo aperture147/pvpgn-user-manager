@@ -36,9 +36,13 @@ class SignupForm extends Model
      */
     public function save($runValidation = true, $attributeNames = null)
     {
-        $emailDomain = explode('@', $this->email);
-        if (strcmp(trim(array_pop($emailDomain)), 'gmail.com') !== 0)
-            throw new BadRequestHttpException("Only gmail is accepted");
+        if (!$this->validate('username'))
+            throw new BadRequestHttpException("Special characters in username is not allowed");
+        if ($this->validate('email')) {
+            $emailDomain = explode('@', $this->email);
+            if (strcmp(trim(array_pop($emailDomain)), 'gmail.com') !== 0)
+                throw new BadRequestHttpException("Only gmail is accepted");
+        } else throw new BadRequestHttpException('Invalid email');
 
         if (!BnetUser::find()->where(["or", ["username" => $this->username], ["acct_email" => $this->email]])->limit(1)->exists()) {
             $lastUser = BnetUser::find()->orderBy(['uid' => SORT_DESC])->limit(1)->one();
@@ -50,10 +54,11 @@ class SignupForm extends Model
             $user->username = $this->username;
             $user->acct_username = $this->username;
             $user->acct_passhash1 = PvpgnHash::get_hash($this->password);
-            $user->verifyBan();
+            $user->auth_lock = 'true';
+            $user->auth_lockreason = BnetUser::EMAIL_NOT_VERIFIED;
             if (!EmailSender::sendVerification($user))
                 return $user->save($runValidation, $attributeNames);
-
-        } else throw new BadRequestHttpException("User existed");
+        }
+        throw new BadRequestHttpException("User existed");
     }
 }
