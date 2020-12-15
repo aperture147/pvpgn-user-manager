@@ -71,11 +71,14 @@ class UserController extends Controller
     {
         $model = new SignupForm();
 
-        if ($model->load(Yii::$app->request->post(), '') && $model->save())
-            return [
-                "message" => "Check your email for verification"
-            ];
-        throw new BadRequestHttpException('Cannot create new user');
+        if ($model->load(Yii::$app->request->post(), '') && $model->validate()) {
+            if ($model->save())
+                return [
+                    "message" => "Check your email for verification"
+                ];
+            throw new ServerErrorHttpException('Cannot create new User');
+        }
+        throw new BadRequestHttpException('Invalid input, please fill and correct all fields');
     }
 
     /**

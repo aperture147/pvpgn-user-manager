@@ -9,6 +9,7 @@ use SendGrid\Mail\TypeException;
 use yii\base\Exception;
 use yii\base\Model;
 use yii\web\BadRequestHttpException;
+use yii\web\ServerErrorHttpException;
 
 class SignupForm extends Model
 {
@@ -36,13 +37,9 @@ class SignupForm extends Model
      */
     public function save($runValidation = true, $attributeNames = null)
     {
-        if (!$this->validate('username'))
-            throw new BadRequestHttpException("Special characters in username is not allowed");
-        if ($this->validate('email')) {
-            $emailDomain = explode('@', $this->email);
-            if (strcmp(trim(array_pop($emailDomain)), 'gmail.com') !== 0)
-                throw new BadRequestHttpException("Only gmail is accepted");
-        } else throw new BadRequestHttpException('Invalid email');
+        $emailDomain = explode('@', $this->email);
+        if (strcmp(trim(array_pop($emailDomain)), 'gmail.com') !== 0)
+            throw new BadRequestHttpException("Only gmail is accepted");
 
         if (!BnetUser::find()->where(["or", ["username" => $this->username], ["acct_email" => $this->email]])->limit(1)->exists()) {
             $lastUser = BnetUser::find()->orderBy(['uid' => SORT_DESC])->limit(1)->one();
@@ -56,9 +53,10 @@ class SignupForm extends Model
             $user->acct_passhash1 = PvpgnHash::get_hash($this->password);
             $user->auth_lock = 'true';
             $user->auth_lockreason = BnetUser::EMAIL_NOT_VERIFIED;
-            if (!EmailSender::sendVerification($user))
+            if (EmailSender::sendVerification($user))
                 return $user->save($runValidation, $attributeNames);
+            throw new ServerErrorHttpException('Cannot send email');
         }
-        throw new BadRequestHttpException("User existed");
+        throw new BadRequestHttpException("User or email existed existed");
     }
 }
